@@ -20,6 +20,8 @@ self.addEventListener("fetch", (e) => {
   const { request } = e;
   const url = new URL(request.url);
 
+  // Only cache http/https (skip chrome-extension://, etc.)
+  if (url.protocol !== "http:" && url.protocol !== "https:") return;
   // Bypass cache for API routes and Next.js internals
   if (API_PREFIXES.some((p) => url.pathname.startsWith(p))) return;
   // Only cache GET requests
