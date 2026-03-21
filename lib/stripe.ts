@@ -4,4 +4,4 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-02-25.clover",
 });
 
-export const PRO_PRICE_ID = "price_1TDPoLFOfT7vP5JsnkEmT8Fh"; // Create this in Stripe Dashboard
+export const PRO_PRICE_ID = "price_1TDPnBFOfT7vP5JsyRS2mKv8"; // Create this in Stripe Dashboard
