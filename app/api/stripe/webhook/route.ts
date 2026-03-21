@@ -1,16 +1,22 @@
+import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { getUser, saveUser } from "@/lib/db";
 import { headers } from "next/headers";
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = headers().get("Stripe-Signature")!;
-  
-  const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
+  const headersList = await headers();
+  const signature = headersList.get("Stripe-Signature")!;
+
+  const event = stripe.webhooks.constructEvent(
+    body,
+    signature,
+    process.env.STRIPE_WEBHOOK_SECRET!
+  );
 
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object as any;
-    const user = await getUser(session.customer_email);
+    const session = event.data.object as Stripe.Checkout.Session;
+    const user = await getUser(session.customer_email ?? "");
     if (user) {
       user.isPro = true;
       user.stripeCustomerId = session.customer as string;

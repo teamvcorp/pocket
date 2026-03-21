@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Olive palette — groundedness, peace, the olive branch */
+  --color-olive-950: #1a2210;
+  --color-olive-900: #243018;
+  --color-olive-800: #344624;
+  --color-olive-700: #4a5c2a;
+  --color-olive-600: #5c7034;
+  --color-olive-500: #6e8440;
+  --color-olive-400: #8aa054;
+  --color-olive-300: #a8bc70;
+  --color-olive-200: #c8d89c;
+  --color-olive-100: #e0ecbe;
+  --color-olive-50: #f2f8e4;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Sunrise palette — hope, warmth, new beginnings */
+  --color-sunrise-900: #5c2800;
+  --color-sunrise-700: #8c4010;
+  --color-sunrise-600: #b05820;
+  --color-sunrise-500: #cc7030;
+  --color-sunrise-400: #e08848;
+  --color-sunrise-300: #f0aa68;
+  --color-sunrise-200: #f8cc98;
+  --color-sunrise-100: #fde8c4;
+  --color-sunrise-50: #fff5e8;
+
+  /* Gold palette — glory, divinity */
+  --color-gold-700: #7a5510;
+  --color-gold-600: #9a6d18;
+  --color-gold-500: #b88820;
+  --color-gold-400: #d0a438;
+  --color-gold-300: #e0bc58;
+  --color-gold-200: #ecd488;
+  --color-gold-100: #f8eecc;
+  --color-gold-50: #fdf8e8;
+
+  /* Neutrals */
+  --color-cream: #fdf8f0;
+  --color-parchment: #f5edd8;
+
+  /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #fdf8f0;
+  --foreground: #1a1608;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, Arial, sans-serif);
+  -webkit-text-size-adjust: 100%;
 }

@@ -1,0 +1,18 @@
+{
+  "name": "Pocket Jesus",
+  "short_name": "Pocket Jesus",
+  "description": "Your personal AI spiritual guide, rooted in faith and scripture.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdf8f0",
+  "theme_color": "#4a5c2a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

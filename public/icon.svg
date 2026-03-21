@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="96" fill="#344624"/>
+  <!-- Olive branch leaves -->
+  <ellipse cx="180" cy="310" rx="38" ry="16" fill="#6e8440" transform="rotate(-40 180 310)"/>
+  <ellipse cx="210" cy="280" rx="36" ry="15" fill="#8aa054" transform="rotate(-30 210 280)"/>
+  <ellipse cx="150" cy="340" rx="34" ry="14" fill="#6e8440" transform="rotate(-50 150 340)"/>
+  <ellipse cx="240" cy="255" rx="32" ry="13" fill="#a8bc70" transform="rotate(-20 240 255)"/>
+  <!-- Branch stem -->
+  <path d="M140 370 Q200 290 270 230" stroke="#5c7034" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <!-- Cross -->
+  <rect x="238" y="110" width="36" height="160" rx="8" fill="#e0d4b0"/>
+  <rect x="190" y="158" width="132" height="36" rx="8" fill="#e0d4b0"/>
+  <!-- Sunrise rays -->
+  <circle cx="256" cy="380" r="28" fill="#cc7030" opacity="0.7"/>
+  <rect x="253" y="340" width="6" height="20" rx="3" fill="#e08848" opacity="0.6"/>
+  <rect x="253" y="340" width="6" height="20" rx="3" fill="#e08848" opacity="0.6" transform="rotate(45 256 380)"/>
+  <rect x="253" y="340" width="6" height="20" rx="3" fill="#e08848" opacity="0.6" transform="rotate(90 256 380)"/>
+  <rect x="253" y="340" width="6" height="20" rx="3" fill="#e08848" opacity="0.6" transform="rotate(135 256 380)"/>
+</svg>
