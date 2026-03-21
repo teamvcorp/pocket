@@ -4,6 +4,17 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
+function useQrCode() {
+  const [qr, setQr] = useState<string | null>(null);
+  useEffect(() => {
+    fetch("/api/qr")
+      .then((r) => r.json())
+      .then(({ dataUrl }) => setQr(dataUrl))
+      .catch(() => {});
+  }, []);
+  return qr;
+}
+
 const BELIEF_SYSTEMS = [
   "Christian",
   "Catholic",
@@ -54,6 +65,7 @@ const FEATURES = [
 export default function Home() {
   const { status } = useSession();
   const router = useRouter();
+  const qrDataUrl = useQrCode();
   const [mode, setMode] = useState<"signin" | "register">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -131,13 +143,21 @@ export default function Home() {
       }}
     >
       {/* Header */}
-      <header className="px-6 py-5 max-w-5xl mx-auto w-full flex items-center">
+      <header className="px-6 py-5 max-w-5xl mx-auto w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-2xl text-olive-700">✝</span>
           <span className="text-xl font-semibold text-olive-900 tracking-wide">
             Pocket Jesus
           </span>
         </div>
+        {/* QR code — desktop only, lets users open the site on mobile */}
+        {qrDataUrl && (
+          <div className="hidden sm:flex flex-col items-center gap-1" title="Scan to open on your phone">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={qrDataUrl} alt="QR code — scan to open on mobile" width={64} height={64} className="rounded-lg border border-olive-200 shadow-sm" />
+            <span className="text-olive-300 text-[9px] font-medium tracking-wide uppercase">Open on mobile</span>
+          </div>
+        )}
       </header>
 
       {/* Hero + Auth */}
