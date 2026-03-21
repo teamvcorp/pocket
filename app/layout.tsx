@@ -67,6 +67,33 @@ export default function RootLayout({
             }}
           />
           {children}
+          <footer className="mt-auto border-t border-olive-200 bg-olive-950 text-olive-200 py-8 px-6">
+            <div className="max-w-3xl mx-auto text-center space-y-2">
+              <p className="font-semibold text-olive-100 text-sm tracking-wide">
+                The Von der Becke Academy Corp
+              </p>
+              <p className="text-xs text-olive-300">
+                A 501(c)(3) Non-Profit Educational Organization
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 pt-1 text-xs text-olive-300">
+                <a
+                  href="tel:7125601128"
+                  className="hover:text-olive-100 transition-colors"
+                >
+                  712-560-1128
+                </a>
+                <a
+                  href="mailto:teamvcorp@thevacorp.com"
+                  className="hover:text-olive-100 transition-colors"
+                >
+                  teamvcorp@thevacorp.com
+                </a>
+              </div>
+              <p className="text-xs text-olive-700 pt-2">
+                &copy; {new Date().getFullYear()} The Von der Becke Academy Corp. All rights reserved.
+              </p>
+            </div>
+          </footer>
         </Providers>
       </body>
     </html>
