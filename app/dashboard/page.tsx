@@ -85,11 +85,12 @@ function DashboardContent() {
       return;
     }
 
+    type SREvent = { results: { [i: number]: { [i: number]: { transcript: string } } } };
     const recognition = new SpeechRecognitionAPI() as {
       lang: string;
       interimResults: boolean;
       maxAlternatives: number;
-      onresult: ((e: SpeechRecognitionEvent) => void) | null;
+      onresult: ((e: SREvent) => void) | null;
       onerror: (() => void) | null;
       onend: (() => void) | null;
       start: () => void;
@@ -100,7 +101,7 @@ function DashboardContent() {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
-    recognition.onresult = (e: SpeechRecognitionEvent) => {
+    recognition.onresult = (e) => {
       const transcript = e.results[0][0].transcript;
       setQuestion((prev) => (prev ? prev + " " + transcript : transcript));
     };
