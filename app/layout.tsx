@@ -152,6 +152,12 @@ export default function RootLayout({
               <p className="text-xs text-olive-700 pt-2">
                 &copy; {new Date().getFullYear()} The Von der Becke Academy Corp. All rights reserved.
               </p>
+              <a
+                href="/api/stripe/portal"
+                className="text-xs text-olive-700 hover:text-olive-400 transition-colors"
+              >
+                Manage subscription
+              </a>
             </div>
           </footer>
         </Providers>
