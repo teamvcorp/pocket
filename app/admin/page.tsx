@@ -84,6 +84,10 @@ export default function Admin() {
     );
   }
 
+  return <AdminConsole />;
+}
+
+function AdminConsole() {
   const [rules, setRules] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
