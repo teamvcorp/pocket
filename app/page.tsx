@@ -71,6 +71,7 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [beliefSystem, setBeliefSystem] = useState("Christian");
   const [language, setLanguage] = useState("English");
+  const [referCode, setReferCode] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export default function Home() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, language, beliefSystem }),
+      body: JSON.stringify({ email, password, language, beliefSystem, referCode: referCode.trim() || undefined }),
     });
     const data = await res.json();
     if (data.error) {
@@ -270,6 +271,23 @@ export default function Home() {
                       <option key={l}>{l}</option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-olive-600 mb-1.5 uppercase tracking-wide">
+                    Referral Code{" "}
+                    <span className="normal-case font-normal text-olive-400">
+                      (optional)
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    autoComplete="off"
+                    value={referCode}
+                    onChange={(e) => setReferCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. ABCD1234"
+                    maxLength={8}
+                    className={inputClass + " font-mono tracking-widest uppercase"}
+                  />
                 </div>
               </>
             )}

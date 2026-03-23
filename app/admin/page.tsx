@@ -4,6 +4,18 @@ import toast from "react-hot-toast";
 
 const SESSION_KEY = "admin_authed";
 
+interface ProUser {
+  email: string;
+  proSince?: string;
+}
+
+interface ProGroup {
+  referralCode: string;
+  referrerEmail: string | null;
+  referrerName: string;
+  proUsers: ProUser[];
+}
+
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
   const [passcode, setPasscode] = useState("");
@@ -80,6 +92,9 @@ export default function Admin() {
   const [newRule, setNewRule] = useState("");
   const editRef = useRef<HTMLTextAreaElement>(null);
 
+  const [proGroups, setProGroups] = useState<ProGroup[]>([]);
+  const [proLoading, setProLoading] = useState(true);
+
   useEffect(() => {
     fetch("/api/admin/codex")
       .then((r) => r.json())
@@ -92,6 +107,14 @@ export default function Admin() {
       })
       .catch(() => toast.error("Failed to load codex"))
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/admin/users")
+      .then((r) => r.json())
+      .then(({ groups }: { groups: ProGroup[] }) => setProGroups(groups))
+      .catch(() => toast.error("Failed to load pro accounts"))
+      .finally(() => setProLoading(false));
   }, []);
 
   useEffect(() => {
@@ -309,6 +332,79 @@ export default function Admin() {
         <div className="mt-5 bg-sunrise-50 border border-sunrise-100 rounded-2xl p-4 text-sm text-sunrise-700">
           <strong className="text-sunrise-800">Note:</strong> Changes take effect
           immediately on all new AI requests.
+        </div>
+
+        {/* Pro Accounts by Referral */}
+        <div className="mt-10 mb-2">
+          <h1 className="text-2xl font-bold text-olive-900">Pro Accounts</h1>
+          <p className="text-olive-500 text-sm mt-1">
+            Paid subscribers organized by the referral code used at sign-up.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {proLoading ? (
+            <div className="bg-white rounded-2xl border border-olive-100 shadow-sm px-5 py-8 flex items-center gap-3 text-olive-400">
+              <div className="w-4 h-4 border-2 border-olive-200 border-t-olive-600 rounded-full animate-spin" />
+              <span className="text-sm">Loading pro accounts…</span>
+            </div>
+          ) : proGroups.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-olive-100 shadow-sm px-5 py-8 text-center text-olive-400 text-sm">
+              No pro accounts yet.
+            </div>
+          ) : (
+            proGroups.map((group) => (
+              <div
+                key={group.referralCode}
+                className="bg-white rounded-2xl border border-olive-100 shadow-sm overflow-hidden"
+              >
+                <div className="bg-olive-50 border-b border-olive-100 px-5 py-4 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-olive-800 text-sm">
+                        {group.referrerName}
+                      </span>
+                      <span className="font-mono text-xs text-olive-400 bg-olive-100 px-2 py-0.5 rounded-full">
+                        {group.referralCode}
+                      </span>
+                    </div>
+                    {group.referrerEmail && (
+                      <p className="text-olive-400 text-xs mt-0.5">
+                        {group.referrerEmail}
+                      </p>
+                    )}
+                  </div>
+                  <span className="text-xs text-olive-400 bg-olive-100 px-2 py-1 rounded-full shrink-0">
+                    {group.proUsers.length} pro user{group.proUsers.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+
+                {group.proUsers.length === 0 ? (
+                  <div className="px-5 py-4 text-olive-400 text-sm italic">
+                    No pro users under this code yet.
+                  </div>
+                ) : (
+                  <div className="divide-y divide-olive-50">
+                    {group.proUsers.map((u) => (
+                      <div key={u.email} className="px-5 py-3 flex items-center justify-between">
+                        <span className="text-sm text-olive-800">{u.email}</span>
+                        {u.proSince && (
+                          <span className="text-xs text-olive-400">
+                            Pro since{" "}
+                            {new Date(u.proSince).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </main>
     </div>

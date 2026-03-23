@@ -20,6 +20,7 @@ export async function POST(req: Request) {
     if (user) {
       user.isPro = true;
       user.stripeCustomerId = session.customer as string;
+      if (!user.proSince) user.proSince = new Date().toISOString();
       await saveUser(user);
     }
   }

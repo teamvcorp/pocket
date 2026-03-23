@@ -15,11 +15,45 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Pocket Jesus — Spiritual AI Guide",
   description:
     "Your personal AI spiritual guide, rooted in faith and scripture.",
   manifest: "/manifest.json",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Pocket Jesus — Spiritual AI Guide",
+    description:
+      "Your personal AI spiritual guide, rooted in faith and scripture.",
+    url: siteUrl,
+    siteName: "Pocket Jesus",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Pocket Jesus — Spiritual AI Guide",
+      },
+    ],
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pocket Jesus — Spiritual AI Guide",
+    description:
+      "Your personal AI spiritual guide, rooted in faith and scripture.",
+    images: ["/og-image.png"],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -49,6 +83,32 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');`,
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "Pocket Jesus",
+              description:
+                "Your personal AI spiritual guide, rooted in faith and scripture.",
+              url: siteUrl,
+              applicationCategory: "LifestyleApplication",
+              operatingSystem: "All",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "The Von der Becke Academy Corp",
+                email: "teamvcorp@thevacorp.com",
+                telephone: "+17125601128",
+              },
+            }),
           }}
         />
       </head>

@@ -9,6 +9,53 @@ export interface UserProfile {
   stripeCustomerId?: string;
   lastQuestionDate?: string;
   dailyCount: number;
+  referralCode?: string; // this user's shareable referral code (issued at registration)
+  referredBy?: string;   // referral code of whoever referred this user
+  proSince?: string;     // ISO date when isPro was first set to true
+}
+
+/** Generate a unique 8-character uppercase referral code (no ambiguous chars). */
+export function generateReferralCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 8; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+/** Fetch every user profile stored in Blob (handles pagination). */
+export async function getAllUsers(): Promise<UserProfile[]> {
+  try {
+    const allBlobs: { url: string }[] = [];
+    let hasMore = true;
+    let cursor: string | undefined;
+    while (hasMore) {
+      const result = await list({ prefix: "users/", cursor, limit: 1000 });
+      allBlobs.push(...result.blobs);
+      hasMore = result.hasMore;
+      cursor = result.cursor;
+    }
+    const users = await Promise.all(
+      allBlobs.map(async (blob) => {
+        try {
+          const res = await fetch(blob.url);
+          return (await res.json()) as UserProfile;
+        } catch {
+          return null;
+        }
+      })
+    );
+    return users.filter((u): u is UserProfile => u !== null);
+  } catch {
+    return [];
+  }
+}
+
+/** Find a user by their referral code (case-insensitive). */
+export async function getUserByReferralCode(code: string): Promise<UserProfile | null> {
+  const users = await getAllUsers();
+  return users.find((u) => u.referralCode === code.toUpperCase()) ?? null;
 }
 
 /** Encode email to a safe, URL-friendly blob path key (no path traversal risk). */

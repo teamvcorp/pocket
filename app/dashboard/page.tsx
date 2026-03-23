@@ -28,6 +28,8 @@ function DashboardContent() {
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
+  const [referralCode, setReferralCode] = useState<string>("");
+  const [copied, setCopied] = useState(false);
   const recognitionRef = useRef<{ start: () => void; stop: () => void; abort: () => void } | null>(null);
 
   useEffect(() => {
@@ -43,7 +45,20 @@ function DashboardContent() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    fetch("/api/user/referral-code")
+      .then((r) => r.json())
+      .then(({ referralCode: code }: { referralCode: string }) => setReferralCode(code))
+      .catch(() => {});
+  }, []);
 
+  const copyReferralCode = () => {
+    if (!referralCode) return;
+    navigator.clipboard.writeText(referralCode).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
   const handleUpgrade = async () => {
     const res = await fetch("/api/stripe/checkout", { method: "POST" });
     const data = await res.json();
@@ -303,6 +318,29 @@ function DashboardContent() {
             >
               Upgrade →
             </button>
+          </div>
+        )}
+
+        {/* Referral code */}
+        {referralCode && (
+          <div className="bg-white rounded-2xl border border-olive-100 shadow-sm overflow-hidden">
+            <div className="bg-olive-50 border-b border-olive-100 px-5 py-4">
+              <h2 className="font-semibold text-olive-800 text-sm">Your Referral Code</h2>
+              <p className="text-olive-400 text-xs mt-0.5">
+                Share this code with friends to invite them to Pocket Jesus.
+              </p>
+            </div>
+            <div className="p-5 flex items-center justify-between gap-4">
+              <span className="font-mono text-2xl font-bold text-olive-700 tracking-widest">
+                {referralCode}
+              </span>
+              <button
+                onClick={copyReferralCode}
+                className="shrink-0 px-4 py-2 rounded-xl border border-olive-200 text-olive-600 text-xs font-semibold hover:bg-olive-50 transition-colors"
+              >
+                {copied ? "Copied!" : "Copy"}
+              </button>
+            </div>
           </div>
         )}
       </main>
