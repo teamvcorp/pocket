@@ -89,10 +89,15 @@ export default function Admin() {
     );
   }
 
-  return <AdminConsole />;
+  const handleLogout = () => {
+    sessionStorage.removeItem(SESSION_KEY);
+    setAuthed(false);
+  };
+
+  return <AdminConsole onLogout={handleLogout} />;
 }
 
-function AdminConsole() {
+function AdminConsole({ onLogout }: { onLogout: () => void }) {
   const [rules, setRules] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -210,6 +215,12 @@ function AdminConsole() {
           <span className="font-semibold text-olive-900">Pocket Jesus</span>
           <span className="text-olive-300">/</span>
           <span className="text-sm text-olive-500 font-medium">Admin Console</span>
+          <button
+            onClick={onLogout}
+            className="ml-auto px-3 py-1.5 text-xs font-medium text-olive-500 border border-olive-200 rounded-lg hover:bg-olive-50 hover:text-olive-700 transition-colors"
+          >
+            Logout
+          </button>
         </div>
       </header>
 
