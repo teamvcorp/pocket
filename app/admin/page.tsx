@@ -16,6 +16,11 @@ interface ProGroup {
   proUsers: ProUser[];
 }
 
+interface FreeUser {
+  email: string;
+  referredBy: string | null;
+}
+
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
   const [passcode, setPasscode] = useState("");
@@ -99,6 +104,10 @@ function AdminConsole() {
   const [proGroups, setProGroups] = useState<ProGroup[]>([]);
   const [proLoading, setProLoading] = useState(true);
 
+  const [freeUsers, setFreeUsers] = useState<FreeUser[]>([]);
+  const [freeLoading, setFreeLoading] = useState(true);
+  const [freeSearch, setFreeSearch] = useState("");
+
   useEffect(() => {
     fetch("/api/admin/codex")
       .then((r) => r.json())
@@ -116,9 +125,15 @@ function AdminConsole() {
   useEffect(() => {
     fetch("/api/admin/users")
       .then((r) => r.json())
-      .then(({ groups }: { groups: ProGroup[] }) => setProGroups(groups))
-      .catch(() => toast.error("Failed to load pro accounts"))
-      .finally(() => setProLoading(false));
+      .then(({ groups, freeUsers: free }: { groups: ProGroup[]; freeUsers: FreeUser[] }) => {
+        setProGroups(groups);
+        setFreeUsers(free);
+      })
+      .catch(() => toast.error("Failed to load accounts"))
+      .finally(() => {
+        setProLoading(false);
+        setFreeLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -408,6 +423,65 @@ function AdminConsole() {
                 )}
               </div>
             ))
+          )}
+        </div>
+
+        {/* Free Users – advertising targets */}
+        <div className="mt-10 mb-2">
+          <h1 className="text-2xl font-bold text-olive-900">Free Users</h1>
+          <p className="text-olive-500 text-sm mt-1">
+            Non-pro accounts &mdash; potential targets for upgrade campaigns.
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-olive-100 shadow-sm overflow-hidden">
+          <div className="bg-olive-50 border-b border-olive-100 px-5 py-4 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="font-semibold text-olive-800 text-sm">All Free Accounts</h2>
+              <p className="text-olive-400 text-xs mt-0.5">
+                {freeUsers.length} free user{freeUsers.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+            <input
+              type="text"
+              placeholder="Search by email…"
+              value={freeSearch}
+              onChange={(e) => setFreeSearch(e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-olive-200 text-olive-900 placeholder-olive-300 text-xs focus:outline-none focus:ring-2 focus:ring-olive-500 bg-cream w-48"
+            />
+          </div>
+
+          {freeLoading ? (
+            <div className="px-5 py-8 flex items-center gap-3 text-olive-400">
+              <div className="w-4 h-4 border-2 border-olive-200 border-t-olive-600 rounded-full animate-spin" />
+              <span className="text-sm">Loading free accounts…</span>
+            </div>
+          ) : freeUsers.length === 0 ? (
+            <div className="px-5 py-8 text-center text-olive-400 text-sm">
+              No free accounts found.
+            </div>
+          ) : (
+            <div className="divide-y divide-olive-50 max-h-96 overflow-y-auto">
+              {freeUsers
+                .filter((u) => u.email.toLowerCase().includes(freeSearch.toLowerCase()))
+                .map((u) => (
+                  <div key={u.email} className="px-5 py-3 flex items-center justify-between">
+                    <span className="text-sm text-olive-800">{u.email}</span>
+                    {u.referredBy ? (
+                      <span className="text-xs text-olive-400 font-mono bg-olive-50 px-2 py-0.5 rounded-full">
+                        via {u.referredBy}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-olive-300 italic">organic</span>
+                    )}
+                  </div>
+                ))}
+              {freeUsers.filter((u) => u.email.toLowerCase().includes(freeSearch.toLowerCase())).length === 0 && (
+                <div className="px-5 py-4 text-olive-400 text-sm text-center">
+                  No results for &ldquo;{freeSearch}&rdquo;
+                </div>
+              )}
+            </div>
           )}
         </div>
       </main>

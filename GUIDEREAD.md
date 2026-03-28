@@ -122,12 +122,62 @@ public/
 - Feature-flagged with `NEXT_PUBLIC_STRIPE_ENABLED=true`
 
 ### PWA
-- **Manifest**  `display: standalone`, `theme_color: #7c3aed`, portrait orientation
+- **Manifest**  `display: standalone`, `theme_color: #4a5c2a`, portrait orientation
 - **Service worker**  network-first with cache fallback; API routes always bypass cache
 - **Android**  native `beforeinstallprompt`  top sliding banner with Install button
 - **iOS Safari**  UA detection  2.5s delay  bottom sliding step-by-step instructions
 - **Dismiss memory**  7-day TTL in localStorage; skips if already running standalone
 - **No-zoom on rotation**  `-webkit-text-size-adjust: 100%` in CSS; proper Viewport export
+
+### Android Icons
+
+Android uses icons defined in `public/manifest.json`. Three PNG icons are required alongside the SVG fallback:
+
+| File | Size | `purpose` | Usage |
+|---|---|---|---|
+| `public/icon.svg` | any | `any` | SVG fallback; used by Chrome on modern Android |
+| `public/icon-192.png` | 192×192 | `any` | Home screen icon (standard launcher) |
+| `public/icon-512.png` | 512×512 | `any` | Splash screen & Play Store listing |
+| `public/icon-512-maskable.png` | 512×512 | `maskable` | Adaptive icon  Android 8+ clips to shape (circle, squircle, etc.) |
+
+**`purpose` values explained:**
+- `any` — displayed as-is; the OS does not clip or reshape the image.
+- `maskable` — the image must have a "safe zone" of at least 40% padding around the centre so the OS can crop it into any adaptive shape without cutting off content. Use [maskable.app](https://maskable.app) to verify the safe zone visually.
+
+**How Android picks the icon:**
+1. Chrome / WebAPK prefers the largest `maskable` icon available for the home screen adaptive slot.
+2. Falls back to the largest `any` PNG (`icon-512.png`) if no maskable icon is present.
+3. The SVG (`icon.svg`, `sizes: "any"`) is used by newer Chromium builds that support SVG icons natively.
+
+**`manifest.json` snippet (current):**
+```json
+"icons": [
+  { "src": "/icon.svg",              "sizes": "any",      "type": "image/svg+xml", "purpose": "any" },
+  { "src": "/icon-192.png",          "sizes": "192x192",  "type": "image/png",     "purpose": "any" },
+  { "src": "/icon-512.png",          "sizes": "512x512",  "type": "image/png",     "purpose": "any" },
+  { "src": "/icon-512-maskable.png", "sizes": "512x512",  "type": "image/png",     "purpose": "maskable" }
+]
+```
+
+**`app/layout.tsx` `icons` metadata (current):**
+```ts
+icons: {
+  icon: [
+    { url: "/icon.svg",     type: "image/svg+xml" },
+    { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+  ],
+  apple: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
+},
+```
+
+> The `apple` entry only affects iOS `<link rel="apple-touch-icon">` tags; it has no effect on Android. Android icon resolution is driven entirely by `manifest.json`.
+
+**Generating / replacing icons:**
+1. Start from a 1024×1024 source SVG or PNG.
+2. Export `icon-192.png` at 192×192 and `icon-512.png` at 512×512 (no padding needed for `any`).
+3. For `icon-512-maskable.png`: add ~20% padding on all sides so the logo fits inside the safe zone; export at 512×512.
+4. Drop all files in `public/` and redeploy — no code changes needed.
 
 ### Desktop
 - **QR Code widget**  fixed top-left, hidden on mobile (`hidden lg:block`); hover to expand from pill to full QR panel pointing to `window.location.origin`

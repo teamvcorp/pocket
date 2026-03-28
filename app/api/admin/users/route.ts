@@ -45,7 +45,12 @@ export async function GET() {
       return a.referrerName.localeCompare(b.referrerName);
     });
 
-    return NextResponse.json({ groups: result });
+    // Collect free (non-pro) users
+    const freeUsers = users
+      .filter((u) => !u.isPro)
+      .map((u) => ({ email: u.email, referredBy: u.referredBy ?? null }));
+
+    return NextResponse.json({ groups: result, freeUsers });
   } catch (err) {
     console.error("Admin users error:", err);
     return NextResponse.json({ error: "Failed to load users" }, { status: 500 });
